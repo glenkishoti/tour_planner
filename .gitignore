@@ -1,0 +1,88 @@
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# =========================
+# IDE / EDITOR
+# =========================
+.idea/
+*.iml
+*.iws
+.ipr
+.vscode/
+.swp
+.swo
+
+# =========================
+# LOG FILES
+# =========================
+.log
+logs/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# =========================
+# ENV FILES / SECRETS
+# =========================
+.env
+.env.
+application-local.yml
+application-local.properties
+
+# =========================
+# JAVA / SPRING BOOT
+# =========================
+backend/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+.mvn/
+!backend/.mvn/wrapper/maven-wrapper.properties
+
+# Gradle
+.gradle/
+build/
+
+# =========================
+# NODE / REACT
+# =========================
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.cache/
+
+# =========================
+# TEST / COVERAGE
+# =========================
+coverage/
+*.lcov
+
+# =========================
+# TEMP FILES
+# =========================
+tmp/
+temp/
+*.tmp
+
+# =========================
+# LOCAL DATABASE FILES
+# =========================
+*.db
+*.sqlite
+*.sqlite3
