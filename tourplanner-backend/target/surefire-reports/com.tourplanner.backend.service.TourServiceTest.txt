@@ -1,0 +1,48 @@
+-------------------------------------------------------------------------------
+Test set: com.tourplanner.backend.service.TourServiceTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 1, Errors: 3, Skipped: 0, Time elapsed: 0.009 s <<< FAILURE! -- in com.tourplanner.backend.service.TourServiceTest
+com.tourplanner.backend.service.TourServiceTest.getTourById_Success -- Time elapsed: 0.002 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.security.core.Authentication.getName()" because the return value of "org.springframework.security.core.context.SecurityContext.getAuthentication()" is null
+	at com.tourplanner.backend.service.TourService.getCurrentUser(TourService.java:93)
+	at com.tourplanner.backend.service.TourService.getTourById(TourService.java:57)
+	at com.tourplanner.backend.service.TourServiceTest.getTourById_Success(TourServiceTest.java:92)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+
+com.tourplanner.backend.service.TourServiceTest.getTourById_NotFound_ThrowsException -- Time elapsed: 0.002 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <jakarta.persistence.EntityNotFoundException> but was: <java.lang.NullPointerException>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3115)
+	at com.tourplanner.backend.service.TourServiceTest.getTourById_NotFound_ThrowsException(TourServiceTest.java:106)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+Caused by: java.lang.NullPointerException: Cannot invoke "org.springframework.security.core.Authentication.getName()" because the return value of "org.springframework.security.core.context.SecurityContext.getAuthentication()" is null
+	at com.tourplanner.backend.service.TourService.getCurrentUser(TourService.java:93)
+	at com.tourplanner.backend.service.TourService.getTourById(TourService.java:57)
+	at com.tourplanner.backend.service.TourServiceTest.lambda$getTourById_NotFound_ThrowsException$0(TourServiceTest.java:106)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
+	... 6 more
+
+com.tourplanner.backend.service.TourServiceTest.deleteTour_Success -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.security.core.Authentication.getName()" because the return value of "org.springframework.security.core.context.SecurityContext.getAuthentication()" is null
+	at com.tourplanner.backend.service.TourService.getCurrentUser(TourService.java:93)
+	at com.tourplanner.backend.service.TourService.deleteTour(TourService.java:82)
+	at com.tourplanner.backend.service.TourServiceTest.deleteTour_Success(TourServiceTest.java:115)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+
+com.tourplanner.backend.service.TourServiceTest.getAllToursForCurrentUser_Success -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.security.core.Authentication.getName()" because the return value of "org.springframework.security.core.context.SecurityContext.getAuthentication()" is null
+	at com.tourplanner.backend.service.TourService.getCurrentUser(TourService.java:93)
+	at com.tourplanner.backend.service.TourService.getAllToursForCurrentUser(TourService.java:47)
+	at com.tourplanner.backend.service.TourServiceTest.getAllToursForCurrentUser_Success(TourServiceTest.java:78)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+
