@@ -1,0 +1,12 @@
+com/tourplanner/backend/security/JwtServiceTest.class
+com/tourplanner/backend/dto/RegisterRequestTest.class
+com/tourplanner/backend/repository/TourRepositoryTest.class
+com/tourplanner/backend/dto/TourRequestTest.class
+com/tourplanner/backend/TourplannerBackendApplicationTests.class
+com/tourplanner/backend/service/TourServiceTest.class
+com/tourplanner/backend/service/AuthServiceTest.class
+com/tourplanner/backend/repository/UserRepositoryTest.class
+com/tourplanner/backend/controller/AuthControllerTest.class
+com/tourplanner/backend/service/TourLogServiceTest.class
+com/tourplanner/backend/dto/TourLogRequestTest.class
+com/tourplanner/backend/dto/LoginRequestTest.class

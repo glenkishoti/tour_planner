@@ -1,0 +1,12 @@
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/test/java/com/tourplanner/backend/security/JwtServiceTest.java
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/test/java/com/tourplanner/backend/dto/TourLogRequestTest.java
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/test/java/com/tourplanner/backend/repository/UserRepositoryTest.java
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/test/java/com/tourplanner/backend/dto/LoginRequestTest.java
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/test/java/com/tourplanner/backend/service/TourLogServiceTest.java
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/test/java/com/tourplanner/backend/service/TourServiceTest.java
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/test/java/com/tourplanner/backend/dto/TourRequestTest.java
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/test/java/com/tourplanner/backend/controller/AuthControllerTest.java
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/test/java/com/tourplanner/backend/TourplannerBackendApplicationTests.java
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/test/java/com/tourplanner/backend/dto/RegisterRequestTest.java
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/test/java/com/tourplanner/backend/service/AuthServiceTest.java
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/test/java/com/tourplanner/backend/repository/TourRepositoryTest.java
