@@ -1,0 +1,308 @@
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+
+body { background: #9e9e9e; }
+
+// Auth pages
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: #3a3d2e;
+  color: #fff;
+  border-radius: 20px;
+  padding: 2rem;
+  width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  h1 {
+    text-align: center;
+    font-size: 1.4rem; }
+
+  .subtitle {
+    text-align: center;
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem; }
+
+  label {
+    font-size: 0.85rem; }
+
+  input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 20px;
+    border: none;
+    background: #b0b0a0;
+    font-size: 0.9rem;
+    outline: none;
+  }
+  .bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; margin-top: 0.5rem;
+    a { color: #aaa; font-size: 0.8rem; text-decoration: underline; }
+  }
+}
+
+// Buttons
+button, .btn-green {
+  padding: 8px 18px; border: none; border-radius: 20px;
+  cursor: pointer; font-size: 0.85rem;
+}
+.btn-green {
+  background: #7a9e6e;
+  color: #fff;
+  }
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid #888;
+  border-radius: 6px;
+  color: inherit;
+  padding: 6px 14px;
+}
+
+.btn-danger {
+  background: #e57373;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px; }
+
+.btn-sm {
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid #aaa;
+  background: transparent;
+  cursor: pointer;
+  margin-right: 4px;
+  font-size: 0.8rem; }
+
+.error {
+  color: #e57373;
+  font-size: 0.8rem; }
+
+// Dashboard
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #fff;
+  color: #222;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+  background: #f5f5f5;
+
+  .logo {
+    font-weight: bold;
+    font-size: 1.1rem;
+    min-width: 130px; }
+
+  .search {
+    flex: 1;
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    font-size: 0.9rem; }
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  overflow: hidden; }
+.sidebar {
+  width: 260px;
+  border-right: 1px solid #eee;
+  background: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    font-weight: bold; }
+}
+.tour-card {
+  margin: 4px 10px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  cursor: pointer;
+  &.active {
+    border-color: #7a9e6e; }
+
+  .tour-name {
+    font-weight: bold;
+    font-size: 0.9rem; }
+
+  .tour-sub {
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: 2px; }
+
+  .tag {
+    display: inline-block;
+    background: #eee;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.75rem;
+    margin-top: 4px;
+    margin-right: 3px; }
+}
+
+.detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 16px; }
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+
+  .detail-title {
+    font-size: 1.2rem;
+    font-weight: bold; }
+}
+
+.info-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap; }
+
+.info-card {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 8px 14px;
+  min-width: 100px;
+
+  .info-label {
+    font-size: 0.7rem;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 4px; }
+}
+
+.map-placeholder {
+  background: #eee;
+  border-radius: 8px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  margin-bottom: 16px; }
+
+.logs-section {
+  flex: 1; }
+
+.logs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-weight: bold; }
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+
+  th {
+    color: #999;
+    text-align: left;
+    padding: 4px 8px;
+    border-bottom: 1px solid #eee;
+    font-weight: normal; }
+
+  td {
+    padding: 6px 8px;
+    border-bottom: 1px solid #eee; }
+}
+
+.no-selection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 1rem; }
+
+// Modal
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100; }
+
+.modal-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  h2 {
+    margin-bottom: 0.5rem; }
+
+  label {
+    font-size: 0.85rem;
+    color: #555; }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    outline: none;
+
+    &:focus {
+      border-color: #7a9e6e; }
+  }
+
+  .row {
+    display: flex;
+    gap: 12px;
+    > div {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px; }
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 0.5rem; }
+}
