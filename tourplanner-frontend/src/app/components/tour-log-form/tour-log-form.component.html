@@ -1,0 +1,40 @@
+<div class="modal-overlay">
+  <div class="modal-card">
+    <h2>{{ log ? 'Edit Log' : 'Add Tour Log' }}</h2>
+
+    <label>Date & Time *</label>
+    <input type="datetime-local" [(ngModel)]="dateTime" />
+
+    <label>Comment *</label>
+    <textarea [(ngModel)]="comment" rows="3" placeholder="How did it go?"></textarea>
+
+    <div class="row">
+      <div>
+        <label>Difficulty (1-10) *</label>
+        <input type="number" [(ngModel)]="difficulty" min="1" max="10" />
+      </div>
+      <div>
+        <label>Rating (1-5) *</label>
+        <input type="number" [(ngModel)]="rating" min="1" max="5" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Distance (km) *</label>
+        <input type="number" [(ngModel)]="totalDistance" min="0" />
+      </div>
+      <div>
+        <label>Time (minutes) *</label>
+        <input type="number" [(ngModel)]="totalTimeMinutes" min="0" />
+      </div>
+    </div>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="modal-actions">
+      <button class="btn-outline" (click)="cancelled.emit()">Cancel</button>
+      <button class="btn-green" (click)="onSave()">Save</button>
+    </div>
+  </div>
+</div>
