@@ -20,6 +20,7 @@ public class User {
     private String username;
 
     @Column(nullable = false, unique = true, length = 100)
+    @jakarta.validation.constraints.Email(message = "Invalid email format")
     private String email;
 
     @Column(nullable = false)
