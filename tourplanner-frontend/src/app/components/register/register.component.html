@@ -1,0 +1,25 @@
+<div class="page-wrapper">
+  <div class="card">
+    <h1>Tour Planner</h1>
+    <p class="subtitle">Register</p>
+
+    <label>Username</label>
+    <input type="text" [(ngModel)]="username" placeholder="Enter username" />
+
+    <label>Email</label>
+    <input type="email" [(ngModel)]="email" placeholder="Enter email" />
+
+    <label>Password</label>
+    <input type="password" [(ngModel)]="password" placeholder="Enter password" />
+
+    <label>Confirm Password</label>
+    <input type="password" [(ngModel)]="confirmPassword" placeholder="Confirm password" />
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="bottom-row">
+      <a routerLink="/login">Already have an account? Login now!</a>
+      <button (click)="onRegister()">Register</button>
+    </div>
+  </div>
+</div>
