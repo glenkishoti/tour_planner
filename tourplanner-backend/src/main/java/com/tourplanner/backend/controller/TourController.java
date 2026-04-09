@@ -19,7 +19,7 @@ import java.util.Map;
 @RequestMapping("/api/tours")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:3000"})
 public class TourController {
 
     private final TourService tourService;
