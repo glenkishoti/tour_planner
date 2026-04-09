@@ -5,7 +5,7 @@ import { Tour, TourRequest } from '../models/tour';
 
 @Injectable({ providedIn: 'root' })
 export class TourService {
-  private baseUrl = 'http://localhost:8080/api/tours';
+  private baseUrl = '/api/tours';
 
   constructor(private http: HttpClient) {}
 

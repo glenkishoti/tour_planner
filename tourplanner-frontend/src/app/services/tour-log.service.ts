@@ -5,7 +5,7 @@ import { TourLog, TourLogRequest } from '../models/tour-log';
 
 @Injectable({ providedIn: 'root' })
 export class TourLogService {
-  private baseUrl = 'http://localhost:8080/api/tours';
+  private baseUrl = '/api/tours';
 
   constructor(private http: HttpClient) {}
 
