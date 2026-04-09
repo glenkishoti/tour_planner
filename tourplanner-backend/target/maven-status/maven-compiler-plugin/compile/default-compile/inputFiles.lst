@@ -14,6 +14,7 @@
 /Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/main/java/com/tourplanner/backend/repository/TourRepository.java
 /Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/main/java/com/tourplanner/backend/entity/Tour.java
 /Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/main/java/com/tourplanner/backend/dto/LoginResponse.java
+/Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/main/java/com/tourplanner/backend/config/CorsConfig.java
 /Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/main/java/com/tourplanner/backend/repository/TourLogRepository.java
 /Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/main/java/com/tourplanner/backend/entity/TourLog.java
 /Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner/tourplanner-backend/src/main/java/com/tourplanner/backend/controller/TourLogController.java

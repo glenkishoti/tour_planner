@@ -11,6 +11,7 @@ com/tourplanner/backend/repository/TourRepository.class
 com/tourplanner/backend/TourplannerBackendApplication.class
 com/tourplanner/backend/security/UserDetailsServiceImpl.class
 com/tourplanner/backend/dto/LoginResponse.class
+com/tourplanner/backend/config/CorsConfig.class
 com/tourplanner/backend/dto/RegisterRequest.class
 com/tourplanner/backend/security/JwtService.class
 com/tourplanner/backend/entity/TourLog.class
