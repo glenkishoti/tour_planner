@@ -7,6 +7,7 @@ import com.tourplanner.backend.entity.TourLog;
 import com.tourplanner.backend.entity.User;
 import com.tourplanner.backend.repository.TourLogRepository;
 import com.tourplanner.backend.repository.TourRepository;
+import com.tourplanner.backend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -33,6 +37,15 @@ class TourLogServiceTest {
 
     @Mock
     private TourRepository tourRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private SecurityContext securityContext;
+
+    @Mock
+    private Authentication authentication;
 
     @InjectMocks
     private TourLogService tourLogService;
@@ -73,6 +86,26 @@ class TourLogServiceTest {
                 .totalTimeMinutes(120L)
                 .rating(4)
                 .build();
+
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("testuser");
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+    }
+
+    @Test
+    void createTourLog_Success() {
+        // Arrange
+        when(tourRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.of(testTour));
+        when(tourLogRepository.save(any(TourLog.class))).thenReturn(testTourLog);
+
+        // Act
+        TourLogResponse result = tourLogService.createTourLog(1L, tourLogRequest);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Great tour!", result.getComment());
+        verify(tourLogRepository).save(any(TourLog.class));
     }
 
     @Test
@@ -111,6 +144,20 @@ class TourLogServiceTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () -> tourLogService.getTourLogById(1L));
+    }
+
+    @Test
+    void updateTourLog_Success() {
+        // Arrange
+        when(tourLogRepository.findByIdAndTourUserId(1L, 1L)).thenReturn(Optional.of(testTourLog));
+        when(tourLogRepository.save(any(TourLog.class))).thenReturn(testTourLog);
+
+        // Act
+        TourLogResponse result = tourLogService.updateTourLog(1L, tourLogRequest);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Great tour!", result.getComment());
     }
 
     @Test

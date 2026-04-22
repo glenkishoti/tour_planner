@@ -2,14 +2,17 @@ package com.tourplanner.backend.controller;
 
 import com.tourplanner.backend.dto.TourRequest;
 import com.tourplanner.backend.dto.TourResponse;
+import com.tourplanner.backend.service.FileStorageService;
 import com.tourplanner.backend.service.TourService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,12 +20,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tours")
-@RequiredArgsConstructor
-@Slf4j
 @CrossOrigin(origins = {"http://localhost:4200", "http://localhost:3000"})
 public class TourController {
 
+    private static final Logger log = LoggerFactory.getLogger(TourController.class);
     private final TourService tourService;
+    private final FileStorageService fileStorageService;
+
+    public TourController(TourService tourService, FileStorageService fileStorageService) {
+        this.tourService = tourService;
+        this.fileStorageService = fileStorageService;
+    }
 
     @PostMapping
     public ResponseEntity<TourResponse> createTour(@Valid @RequestBody TourRequest request) {
@@ -61,6 +69,44 @@ public class TourController {
         Map<String, String> response = new HashMap<>();
         response.put("message", "Tour deleted successfully");
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{id}/image")
+    public ResponseEntity<Map<String, String>> uploadTourImage(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+        log.info("POST /api/tours/{}/image - Uploading tour image", id);
+
+        String filePath = fileStorageService.storeFile(file);
+        tourService.updateTourImage(id, filePath);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Image uploaded successfully");
+        response.put("imagePath", filePath);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/image")
+    public ResponseEntity<byte[]> getTourImage(@PathVariable Long id) {
+        log.info("GET /api/tours/{}/image - Getting tour image", id);
+
+        TourResponse tour = tourService.getTourById(id);
+        String imagePath = tour.getImagePath();
+
+        if (imagePath == null || imagePath.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        byte[] imageBytes = fileStorageService.loadFile(imagePath);
+
+        if (imageBytes == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        MediaType contentType = MediaType.parseMediaType(fileStorageService.getContentType(imagePath));
+        return ResponseEntity.ok()
+                .contentType(contentType)
+                .body(imageBytes);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)

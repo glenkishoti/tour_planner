@@ -6,9 +6,11 @@ import com.tourplanner.backend.entity.Tour;
 import com.tourplanner.backend.entity.User;
 import com.tourplanner.backend.repository.TourRepository;
 import com.tourplanner.backend.repository.UserRepository;
+import com.tourplanner.backend.service.client.OpenRouteServiceClient;
+import com.tourplanner.backend.service.client.RouteInfo;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -19,13 +21,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class TourService {
 
+    private static final Logger log = LoggerFactory.getLogger(TourService.class);
+
     private final TourRepository tourRepository;
     private final UserRepository userRepository;
+    private final OpenRouteServiceClient openRouteServiceClient;
+
+    public TourService(TourRepository tourRepository, UserRepository userRepository,
+                       OpenRouteServiceClient openRouteServiceClient) {
+        this.tourRepository = tourRepository;
+        this.userRepository = userRepository;
+        this.openRouteServiceClient = openRouteServiceClient;
+    }
 
     public TourResponse createTour(TourRequest request) {
         log.info("Creating new tour: {}", request.getName());
@@ -35,6 +45,19 @@ public class TourService {
         Tour tour = new Tour();
         mapRequestToEntity(request, tour);
         tour.setUser(user);
+
+        RouteInfo routeInfo = openRouteServiceClient.getRouteInfo(
+            request.getFrom(),
+            request.getTo(),
+            request.getTransportType()
+        );
+
+        if (request.getDistance() == null) {
+            tour.setDistance(routeInfo.getDistance());
+        }
+        if (request.getEstimatedTimeMinutes() == null) {
+            tour.setEstimatedTime(Duration.ofSeconds(routeInfo.getDurationInSeconds()));
+        }
 
         Tour savedTour = tourRepository.save(tour);
         log.info("Tour created successfully with id: {}", savedTour.getId());
@@ -72,6 +95,19 @@ public class TourService {
 
         mapRequestToEntity(request, tour);
 
+        RouteInfo routeInfo = openRouteServiceClient.getRouteInfo(
+            request.getFrom(),
+            request.getTo(),
+            request.getTransportType()
+        );
+
+        if (request.getDistance() == null) {
+            tour.setDistance(routeInfo.getDistance());
+        }
+        if (request.getEstimatedTimeMinutes() == null) {
+            tour.setEstimatedTime(Duration.ofSeconds(routeInfo.getDurationInSeconds()));
+        }
+
         Tour updatedTour = tourRepository.save(tour);
         log.info("Tour updated successfully with id: {}", updatedTour.getId());
 
@@ -89,6 +125,18 @@ public class TourService {
         log.info("Tour deleted successfully with id: {}", id);
     }
 
+    public void updateTourImage(Long id, String imagePath) {
+        User user = getCurrentUser();
+        log.info("Updating image for tour with id: {} for user: {}", id, user.getUsername());
+
+        Tour tour = tourRepository.findByIdAndUserId(id, user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Tour not found with id: " + id));
+
+        tour.setImagePath(imagePath);
+        tourRepository.save(tour);
+        log.info("Tour image updated successfully with id: {}", id);
+    }
+
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username)
@@ -102,7 +150,9 @@ public class TourService {
         tour.setTo(request.getTo());
         tour.setTransportType(request.getTransportType());
         tour.setDistance(request.getDistance());
-        tour.setEstimatedTime(Duration.ofMinutes(request.getEstimatedTimeMinutes()));
+        if (request.getEstimatedTimeMinutes() != null) {
+            tour.setEstimatedTime(Duration.ofMinutes(request.getEstimatedTimeMinutes()));
+        }
     }
 
     private TourResponse mapToResponse(Tour tour) {
@@ -114,8 +164,10 @@ public class TourService {
                 .to(tour.getTo())
                 .transportType(tour.getTransportType())
                 .distance(tour.getDistance())
-                .estimatedTimeMinutes(tour.getEstimatedTime().toMinutes())
+                .estimatedTimeMinutes(tour.getEstimatedTime() != null ? tour.getEstimatedTime().toMinutes() : null)
                 .imagePath(tour.getImagePath())
+                .popularity(tour.getPopularity())
+                .childFriendliness(tour.getChildFriendliness())
                 .build();
     }
 }

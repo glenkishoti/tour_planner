@@ -6,6 +6,8 @@ import com.tourplanner.backend.entity.Tour;
 import com.tourplanner.backend.entity.User;
 import com.tourplanner.backend.repository.TourRepository;
 import com.tourplanner.backend.repository.UserRepository;
+import com.tourplanner.backend.service.client.OpenRouteServiceClient;
+import com.tourplanner.backend.service.client.RouteInfo;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -31,6 +36,15 @@ class TourServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private OpenRouteServiceClient openRouteServiceClient;
+
+    @Mock
+    private SecurityContext securityContext;
+
+    @Mock
+    private Authentication authentication;
 
     @InjectMocks
     private TourService tourService;
@@ -67,6 +81,30 @@ class TourServiceTest {
                 .distance(300.0)
                 .estimatedTimeMinutes(180L)
                 .build();
+
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("testuser");
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+    }
+
+    @Test
+    void createTour_Success() {
+        // Arrange
+        RouteInfo routeInfo = new RouteInfo();
+        routeInfo.setDistance(300.0);
+        routeInfo.setDurationInSeconds(10800L);
+        
+        when(openRouteServiceClient.getRouteInfo(any(), any(), any())).thenReturn(routeInfo);
+        when(tourRepository.save(any(Tour.class))).thenReturn(testTour);
+
+        // Act
+        TourResponse result = tourService.createTour(tourRequest);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Test Tour", result.getName());
+        verify(tourRepository).save(any(Tour.class));
     }
 
     @Test
@@ -104,6 +142,25 @@ class TourServiceTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () -> tourService.getTourById(1L));
+    }
+
+    @Test
+    void updateTour_Success() {
+        // Arrange
+        RouteInfo routeInfo = new RouteInfo();
+        routeInfo.setDistance(300.0);
+        routeInfo.setDurationInSeconds(10800L);
+        
+        when(tourRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.of(testTour));
+        when(openRouteServiceClient.getRouteInfo(any(), any(), any())).thenReturn(routeInfo);
+        when(tourRepository.save(any(Tour.class))).thenReturn(testTour);
+
+        // Act
+        TourResponse result = tourService.updateTour(1L, tourRequest);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Test Tour", result.getName());
     }
 
     @Test
