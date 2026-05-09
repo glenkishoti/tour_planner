@@ -9,8 +9,8 @@ import com.tourplanner.backend.repository.TourLogRepository;
 import com.tourplanner.backend.repository.TourRepository;
 import com.tourplanner.backend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -21,14 +21,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class TourLogService {
+
+    private static final Logger log = LoggerFactory.getLogger(TourLogService.class);
 
     private final TourLogRepository tourLogRepository;
     private final TourRepository tourRepository;
     private final UserRepository userRepository;
+
+    public TourLogService(TourLogRepository tourLogRepository, TourRepository tourRepository, UserRepository userRepository) {
+        this.tourLogRepository = tourLogRepository;
+        this.tourRepository = tourRepository;
+        this.userRepository = userRepository;
+    }
 
     public TourLogResponse createTourLog(Long tourId, TourLogRequest request) {
         log.info("Creating new tour log for tour id: {}", tourId);
