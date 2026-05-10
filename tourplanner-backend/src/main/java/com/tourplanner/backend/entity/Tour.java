@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Data;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "tours")
 public class Tour {
@@ -57,39 +59,6 @@ public class Tour {
 
     public Tour() {}
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public String getFrom() { return from; }
-    public void setFrom(String from) { this.from = from; }
-
-    public String getTo() { return to; }
-    public void setTo(String to) { this.to = to; }
-
-    public String getTransportType() { return transportType; }
-    public void setTransportType(String transportType) { this.transportType = transportType; }
-
-    public Double getDistance() { return distance; }
-    public void setDistance(Double distance) { this.distance = distance; }
-
-    public Duration getEstimatedTime() { return estimatedTime; }
-    public void setEstimatedTime(Duration estimatedTime) { this.estimatedTime = estimatedTime; }
-
-    public String getImagePath() { return imagePath; }
-    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
-
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-
-    public List<TourLog> getTourLogs() { return tourLogs; }
-    public void setTourLogs(List<TourLog> tourLogs) { this.tourLogs = tourLogs; }
-
     @Transient
     public Integer getPopularity() {
         return tourLogs != null ? tourLogs.size() : 0;
@@ -102,7 +71,7 @@ public class Tour {
         }
 
         double avgDifficulty = tourLogs.stream()
-                .mapToInt(log -> log.getDifficulty())
+                .mapToInt(TourLog::getDifficulty)
                 .average()
                 .orElse(5.0);
 
@@ -112,7 +81,7 @@ public class Tour {
                 .orElse(120.0);
 
         double avgDistance = tourLogs.stream()
-                .mapToDouble(log -> log.getTotalDistance())
+                .mapToDouble(TourLog::getTotalDistance)
                 .average()
                 .orElse(10.0);
 
