@@ -20,6 +20,8 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.tourplanner.backend.service.SearchService.getTourResponse;
+
 @Service
 @Transactional
 public class TourService {
@@ -156,18 +158,6 @@ public class TourService {
     }
 
     private TourResponse mapToResponse(Tour tour) {
-        return TourResponse.builder()
-                .id(tour.getId())
-                .name(tour.getName())
-                .description(tour.getDescription())
-                .from(tour.getFrom())
-                .to(tour.getTo())
-                .transportType(tour.getTransportType())
-                .distance(tour.getDistance())
-                .estimatedTimeMinutes(tour.getEstimatedTime() != null ? tour.getEstimatedTime().toMinutes() : null)
-                .imagePath(tour.getImagePath())
-                .popularity(tour.getPopularity())
-                .childFriendliness(tour.getChildFriendliness())
-                .build();
+        return getTourResponse(tour);
     }
 }

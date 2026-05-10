@@ -11,7 +11,7 @@ This Docker setup runs the complete Tour Planner application with PostgreSQL, Sp
 
 1. **Navigate to the project root:**
    ```bash
-   cd /Users/pari/Documents/GitHub/BIF4/SWEN2/tour_planner
+   cd ~/tour_planner
    ```
 
 2. **Start all services:**
@@ -100,16 +100,16 @@ docker-compose logs -f backend
 ## Architecture
 
 ```
-┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+┌─────────────┐       ┌─────────────┐       ┌─────────────┐
 │   Angular   │──────▶│   Nginx     │──────▶│   Spring    │
 │  Frontend   │:4200  │   (Proxy)   │:80    │   Backend   │:8080
-└─────────────┘      └─────────────┘      └──────┬──────┘
-                                                 │
-                                                 ▼
-                                          ┌─────────────┐
-                                          │  PostgreSQL │
-                                          │   :5432     │
-                                          └─────────────┘
+└─────────────┘       └─────────────┘       └──────┬──────┘
+                                                   │
+                                                   ▼
+                                            ┌─────────────┐
+                                            │  PostgreSQL │
+                                            │   :5432     │
+                                            └─────────────┘
 ```
 
 Nginx proxies `/api/*` requests to the backend and serves the Angular app for all other routes.

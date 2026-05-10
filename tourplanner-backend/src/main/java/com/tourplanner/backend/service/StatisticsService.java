@@ -75,7 +75,7 @@ public class StatisticsService {
 
         List<TourLog> allLogs = tours.stream()
                 .flatMap(tour -> tour.getTourLogs().stream())
-                .collect(Collectors.toList());
+                .toList();
 
         double averageRating = allLogs.stream()
                 .mapToInt(TourLog::getRating)

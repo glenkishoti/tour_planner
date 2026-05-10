@@ -5,13 +5,11 @@ import com.tourplanner.backend.dto.LoginResponse;
 import com.tourplanner.backend.dto.MessageResponse;
 import com.tourplanner.backend.dto.RegisterRequest;
 import com.tourplanner.backend.service.AuthService;
-import org.apache.coyote.Request;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:3000"})
 public class AuthController {
     private final AuthService authService;
 

@@ -1,11 +1,13 @@
 package com.tourplanner.backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
+@Setter
+@Getter
 public class TourRequest {
 
     @NotBlank(message = "Tour name is required")
@@ -28,33 +30,12 @@ public class TourRequest {
 
     public TourRequest() {}
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public String getFrom() { return from; }
-    public void setFrom(String from) { this.from = from; }
-
-    public String getTo() { return to; }
-    public void setTo(String to) { this.to = to; }
-
-    public String getTransportType() { return transportType; }
-    public void setTransportType(String transportType) { this.transportType = transportType; }
-
-    public Double getDistance() { return distance; }
-    public void setDistance(Double distance) { this.distance = distance; }
-
-    public Long getEstimatedTimeMinutes() { return estimatedTimeMinutes; }
-    public void setEstimatedTimeMinutes(Long estimatedTimeMinutes) { this.estimatedTimeMinutes = estimatedTimeMinutes; }
-
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder {
-        private TourRequest request = new TourRequest();
+        private final TourRequest request = new TourRequest();
 
         public Builder name(String name) { request.setName(name); return this; }
         public Builder description(String description) { request.setDescription(description); return this; }

@@ -85,7 +85,7 @@ public class SearchService {
                 .filter(tour -> minDistance == null || tour.getDistance() >= minDistance)
                 .filter(tour -> maxDistance == null || tour.getDistance() <= maxDistance)
                 .filter(tour -> minPopularity == null || tour.getPopularity() >= minPopularity)
-                .collect(Collectors.toList());
+                .toList();
 
         return tours.stream()
                 .map(this::mapTourToResponse)
@@ -99,6 +99,10 @@ public class SearchService {
     }
 
     private TourResponse mapTourToResponse(Tour tour) {
+        return getTourResponse(tour);
+    }
+
+    static TourResponse getTourResponse(Tour tour) {
         return TourResponse.builder()
                 .id(tour.getId())
                 .name(tour.getName())

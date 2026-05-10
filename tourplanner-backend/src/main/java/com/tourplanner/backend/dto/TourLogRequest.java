@@ -5,10 +5,14 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Setter
+@Getter
 public class TourLogRequest {
 
     @NotNull(message = "Date and time is required")
@@ -37,30 +41,12 @@ public class TourLogRequest {
 
     public TourLogRequest() {}
 
-    public LocalDateTime getDateTime() { return dateTime; }
-    public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
-
-    public String getComment() { return comment; }
-    public void setComment(String comment) { this.comment = comment; }
-
-    public Integer getDifficulty() { return difficulty; }
-    public void setDifficulty(Integer difficulty) { this.difficulty = difficulty; }
-
-    public Double getTotalDistance() { return totalDistance; }
-    public void setTotalDistance(Double totalDistance) { this.totalDistance = totalDistance; }
-
-    public Long getTotalTimeMinutes() { return totalTimeMinutes; }
-    public void setTotalTimeMinutes(Long totalTimeMinutes) { this.totalTimeMinutes = totalTimeMinutes; }
-
-    public Integer getRating() { return rating; }
-    public void setRating(Integer rating) { this.rating = rating; }
-
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder {
-        private TourLogRequest request = new TourLogRequest();
+        private final TourLogRequest request = new TourLogRequest();
 
         public Builder dateTime(LocalDateTime dateTime) { request.setDateTime(dateTime); return this; }
         public Builder comment(String comment) { request.setComment(comment); return this; }

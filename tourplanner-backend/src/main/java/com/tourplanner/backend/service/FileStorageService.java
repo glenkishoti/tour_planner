@@ -45,7 +45,7 @@ public class FileStorageService {
                 extension = originalFilename.substring(originalFilename.lastIndexOf("."));
             }
 
-            String newFilename = UUID.randomUUID().toString() + extension;
+            String newFilename = UUID.randomUUID()+ extension;
             Path targetLocation = Paths.get(uploadDir).resolve(newFilename);
 
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
@@ -82,23 +82,6 @@ public class FileStorageService {
         } catch (IOException e) {
             log.error("Failed to load file: {}", e.getMessage());
             return null;
-        }
-    }
-
-    public void deleteFile(String filename) {
-        try {
-            if (filename == null || filename.isEmpty()) {
-                return;
-            }
-
-            Path filePath = Paths.get(uploadDir).resolve(Paths.get(filename).getFileName()).normalize();
-
-            if (Files.exists(filePath)) {
-                Files.delete(filePath);
-                log.info("Deleted file: {}", filename);
-            }
-        } catch (IOException e) {
-            log.error("Failed to delete file: {}", e.getMessage());
         }
     }
 

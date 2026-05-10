@@ -5,10 +5,7 @@ import jakarta.persistence.Converter;
 
 import java.time.Duration;
 
-/**
- * Converts java.time.Duration to/from a Long (minutes) for DB storage.
- * Without this, Hibernate stores Duration as nanoseconds by default.
- */
+
 @Converter
 public class DurationMinutesConverter implements AttributeConverter<Duration, Long> {
 

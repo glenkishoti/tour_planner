@@ -1,7 +1,12 @@
 package com.tourplanner.backend.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
 public class TourLogResponse {
     private Long id;
     private LocalDateTime dateTime;
@@ -14,36 +19,12 @@ public class TourLogResponse {
 
     public TourLogResponse() {}
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public LocalDateTime getDateTime() { return dateTime; }
-    public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
-
-    public String getComment() { return comment; }
-    public void setComment(String comment) { this.comment = comment; }
-
-    public Integer getDifficulty() { return difficulty; }
-    public void setDifficulty(Integer difficulty) { this.difficulty = difficulty; }
-
-    public Double getTotalDistance() { return totalDistance; }
-    public void setTotalDistance(Double totalDistance) { this.totalDistance = totalDistance; }
-
-    public Long getTotalTimeMinutes() { return totalTimeMinutes; }
-    public void setTotalTimeMinutes(Long totalTimeMinutes) { this.totalTimeMinutes = totalTimeMinutes; }
-
-    public Integer getRating() { return rating; }
-    public void setRating(Integer rating) { this.rating = rating; }
-
-    public Long getTourId() { return tourId; }
-    public void setTourId(Long tourId) { this.tourId = tourId; }
-
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder {
-        private TourLogResponse response = new TourLogResponse();
+        private final TourLogResponse response = new TourLogResponse();
 
         public Builder id(Long id) { response.setId(id); return this; }
         public Builder dateTime(LocalDateTime dateTime) { response.setDateTime(dateTime); return this; }
