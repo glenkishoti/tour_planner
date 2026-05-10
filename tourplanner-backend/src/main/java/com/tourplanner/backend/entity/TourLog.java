@@ -1,5 +1,6 @@
 package com.tourplanner.backend.entity;
 
+import com.tourplanner.backend.config.DurationMinutesConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -41,6 +42,7 @@ public class TourLog {
 
     @NotNull(message = "Total time is required")
     @Column(nullable = false, name = "total_time")
+    @Convert(converter = DurationMinutesConverter.class)
     private Duration totalTime;
 
     @NotNull(message = "Rating is required")

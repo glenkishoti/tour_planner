@@ -1,5 +1,6 @@
 package com.tourplanner.backend.entity;
 
+import com.tourplanner.backend.config.DurationMinutesConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -45,6 +46,7 @@ public class Tour {
 
     @NotNull(message = "Estimated time is required")
     @Column(nullable = false, name = "estimated_time")
+    @Convert(converter = DurationMinutesConverter.class)
     private Duration estimatedTime;
 
     @Column(name = "image_path")
