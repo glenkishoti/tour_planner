@@ -82,7 +82,8 @@ button, .btn-green {
   background: transparent;
   cursor: pointer;
   margin-right: 4px;
-  font-size: 0.8rem; }
+  font-size: 0.8rem;
+  color: #333;  }
 
 .error {
   color: #e57373;
@@ -258,7 +259,7 @@ button, .btn-green {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100; }
+  z-index: 1000; }
 
 .modal-card {
   background: #fff;
@@ -305,4 +306,55 @@ button, .btn-green {
     justify-content: flex-end;
     gap: 10px;
     margin-top: 0.5rem; }
+}
+
+.success-banner {
+  background: #e8f5e9; color: #2e7d32;
+  padding: 8px 16px; font-size: 0.85rem;
+}
+.error-banner {
+  background: #ffebee; color: #c62828;
+  padding: 8px 16px; font-size: 0.85rem;
+}
+.searching-indicator {
+  font-size: 0.8rem; color: #999; font-style: italic;
+}
+.description {
+  padding: 8px 0 12px;
+  font-size: 0.9rem;
+  color: #555;
+  font-style: italic;
+}
+.comment-cell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.no-tours {
+  padding: 16px;
+  text-align: center;
+  color: #aaa;
+  font-size: 0.85rem;
+}
+.no-logs {
+  text-align: center;
+  color: #aaa;
+  padding: 12px;
+  font-size: 0.85rem;
+}
+
+.welcome-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #555;
+
+  .welcome-icon { font-size: 3rem; }
+  h2 { font-size: 1.4rem; font-weight: 500; color: #333; }
+  p { font-size: 0.95rem; margin: 0; }
+  .welcome-hint { color: #999; font-size: 0.85rem; }
 }

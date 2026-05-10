@@ -8,6 +8,8 @@ export interface Tour {
   distance: number;
   estimatedTimeMinutes: number;
   imagePath?: string;
+  popularity?: number;
+  childFriendliness?: number;
 }
 
 export interface TourRequest {

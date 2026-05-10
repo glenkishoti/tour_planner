@@ -2,11 +2,26 @@
   <!-- Header -->
   <div class="header">
     <span class="logo">Tour Planner</span>
-    <input type="text" [(ngModel)]="searchQuery" placeholder="Search tours / logs..." class="search" />
-    <button class="btn-outline">Import</button>
-    <button class="btn-outline">Export</button>
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      (ngModelChange)="onSearchChange()"
+      placeholder="Search tours / logs..."
+      class="search" />
+    <span *ngIf="isSearching" class="searching-indicator">Searching...</span>
+    <button class="btn-outline" (click)="triggerImport()">Import</button>
+    <input
+      type="file"
+      id="import-file-input"
+      accept=".json"
+      style="display:none"
+      (change)="onImport($event)" />
+    <button class="btn-outline" (click)="onExport()">Export</button>
     <button class="btn-danger" (click)="authService.logout()">Logout</button>
   </div>
+
+  <div *ngIf="importSuccess" class="success-banner">{{ importSuccess }}</div>
+  <div *ngIf="importError" class="error-banner">{{ importError }}</div>
 
   <div class="body">
     <!-- Sidebar -->
@@ -16,7 +31,7 @@
         <button class="btn-green" (click)="openCreateTour()">+ New</button>
       </div>
       <div
-        *ngFor="let tour of filteredTours"
+        *ngFor="let tour of tours"
         class="tour-card"
         [class.active]="selectedTour?.id === tour.id"
         (click)="selectTour(tour)">
@@ -26,6 +41,7 @@
         <span class="tag">{{ tour.distance }} km</span>
         <span class="tag">{{ formatTime(tour.estimatedTimeMinutes) }}</span>
       </div>
+      <div *ngIf="tours.length === 0" class="no-tours">No tours found</div>
     </div>
 
     <!-- Detail panel -->
@@ -38,16 +54,51 @@
         </div>
       </div>
 
+      <!-- Info cards -->
       <div class="info-row">
-        <div class="info-card"><div class="info-label">From</div><div>{{ selectedTour.from }}</div></div>
-        <div class="info-card"><div class="info-label">To</div><div>{{ selectedTour.to }}</div></div>
-        <div class="info-card"><div class="info-label">Transport</div><div>{{ selectedTour.transportType }}</div></div>
-        <div class="info-card"><div class="info-label">Distance</div><div>{{ selectedTour.distance }} km</div></div>
-        <div class="info-card"><div class="info-label">Est. Time</div><div>{{ formatTime(selectedTour.estimatedTimeMinutes) }}</div></div>
+        <div class="info-card">
+          <div class="info-label">From</div>
+          <div>{{ selectedTour.from }}</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">To</div>
+          <div>{{ selectedTour.to }}</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Transport</div>
+          <div>{{ selectedTour.transportType }}</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Distance</div>
+          <div>{{ selectedTour.distance }} km</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Est. Time</div>
+          <div>{{ formatTime(selectedTour.estimatedTimeMinutes) }}</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Popularity</div>
+          <div>{{ getPopularityLabel(tourStats?.popularity ?? selectedTour.popularity) }}</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Child-friendly</div>
+          <div>{{ getChildFriendlinessLabel(tourStats?.childFriendliness ?? selectedTour.childFriendliness) }}</div>
+        </div>
       </div>
 
-      <div class="map-placeholder">Route Map (Leaflet)</div>
+      <!-- Description -->
+      <div class="description" *ngIf="selectedTour.description">
+        {{ selectedTour.description }}
+      </div>
 
+      <!-- Leaflet Map -->
+      <app-tour-map
+        [fromLocation]="selectedTour.from"
+        [toLocation]="selectedTour.to"
+        [tourName]="selectedTour.name">
+      </app-tour-map>
+
+      <!-- Tour Logs -->
       <div class="logs-section">
         <div class="logs-header">
           <span>Tour Logs</span>
@@ -55,7 +106,15 @@
         </div>
         <table class="log-table">
           <thead>
-          <tr><th>Date</th><th>Difficulty</th><th>Distance</th><th>Time</th><th>Rating</th><th>Actions</th></tr>
+          <tr>
+            <th>Date</th>
+            <th>Difficulty</th>
+            <th>Distance</th>
+            <th>Time</th>
+            <th>Rating</th>
+            <th>Comment</th>
+            <th>Actions</th>
+          </tr>
           </thead>
           <tbody>
           <tr *ngFor="let log of tourLogs">
@@ -64,10 +123,14 @@
             <td>{{ log.totalDistance }} km</td>
             <td>{{ formatTime(log.totalTimeMinutes) }}</td>
             <td>{{ log.rating }}/5</td>
+            <td class="comment-cell">{{ log.comment }}</td>
             <td>
               <button class="btn-sm" (click)="openEditLog(log)">Edit</button>
               <button class="btn-sm btn-danger" (click)="deleteLog(log.id)">Delete</button>
             </td>
+          </tr>
+          <tr *ngIf="tourLogs.length === 0">
+            <td colspan="7" class="no-logs">No logs yet</td>
           </tr>
           </tbody>
         </table>
@@ -75,7 +138,12 @@
     </div>
 
     <ng-template #noSelection>
-      <div class="no-selection">Select a tour to see details</div>
+      <div class="welcome-card">
+        <div class="welcome-icon">🗺️</div>
+        <h2>Welcome, {{ authService.getUsername() }}!</h2>
+        <p>You have <strong>{{ tours.length }}</strong> {{ tours.length === 1 ? 'tour' : 'tours' }} planned.</p>
+        <p class="welcome-hint">Select a tour from the left to see details, or create a new one to get started.</p>
+      </div>
     </ng-template>
   </div>
 </div>

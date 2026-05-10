@@ -19,8 +19,13 @@ WORKDIR /app
 # Copy the built JAR from builder stage
 COPY --from=builder /app/target/*.jar app.jar
 
-# Create a non-root user
-RUN addgroup -S spring && adduser -S spring -G spring
+# Create uploads directory first (still root at this point)
+RUN mkdir -p /app/uploads
+
+# Create a non-root user and give ownership of both /app and uploads
+RUN addgroup -S spring && adduser -S spring -G spring && chown -R spring:spring /app
+
+
 USER spring:spring
 
 EXPOSE 8080
