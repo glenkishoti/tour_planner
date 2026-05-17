@@ -68,29 +68,25 @@ public class Tour {
 
     @Transient
     public Double getChildFriendliness() {
-        if (tourLogs == null || tourLogs.isEmpty()) {
+        if (distance == null || estimatedTime == null) {
             return null;
         }
 
-        double avgDifficulty = tourLogs.stream()
-                .mapToInt(TourLog::getDifficulty)
-                .average()
-                .orElse(5.0);
+        double distanceKm  = distance;
+        double timeMinutes = estimatedTime.toMinutes();
+        double avgDifficulty = (tourLogs == null || tourLogs.isEmpty())
+                ? 5.0
+                : tourLogs.stream()
+                          .mapToInt(TourLog::getDifficulty)
+                          .average()
+                          .orElse(5.0);
+        double normalizedDifficulty = Math.clamp((10 - avgDifficulty) / 9.0, 0, 1);
+        double normalizedTime       = Math.max(0, 1 - (timeMinutes / 120.0));
+        double normalizedDistance   = Math.max(0, 1 - (distanceKm  / 10.0));
 
-        double avgTime = tourLogs.stream()
-                .mapToLong(log -> log.getTotalTime().toMinutes())
-                .average()
-                .orElse(120.0);
-
-        double avgDistance = tourLogs.stream()
-                .mapToDouble(TourLog::getTotalDistance)
-                .average()
-                .orElse(10.0);
-
-        double normalizedDifficulty = (10 - avgDifficulty) / 9.0;
-        double normalizedTime = Math.max(0, 1 - (avgTime / 300.0));
-        double normalizedDistance = Math.max(0, 1 - (avgDistance / 20.0));
-
-        return (normalizedDifficulty * 0.4 + normalizedTime * 0.3 + normalizedDistance * 0.3) * 100;
+        double score = (normalizedDifficulty * 0.30
+                      + normalizedTime       * 0.35
+                      + normalizedDistance   * 0.35) * 100;
+        return Math.clamp(score, 0.0, 100.0);
     }
 }

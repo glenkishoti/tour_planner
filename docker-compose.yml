@@ -25,10 +25,13 @@ services:
       JWT_SECRET: ${JWT_SECRET:-Y2hhbmdlbXlqd3RzZWNyZXRrZXlmb3Jwcm9kdWN0aW9udXNldXNl}
       JWT_EXPIRATION: 86400000
       SERVER_PORT: 8080
+      UPLOAD_DIR: /app/uploads/images
     ports:
       - "8080:8080"
     depends_on:
       - postgres
+    volumes:
+      - tour_images:/app/uploads/images
 
   frontend:
     build:
@@ -42,3 +45,4 @@ services:
 
 volumes:
   postgres_data:
+  tour_images:
