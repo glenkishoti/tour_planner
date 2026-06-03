@@ -1,6 +1,9 @@
 <div class="dashboard">
   <!-- Header -->
   <div class="header">
+    <button class="hamburger-btn" (click)="toggleSidebar()" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
     <span class="logo">Tour Planner</span>
     <input
       type="text"
@@ -17,6 +20,9 @@
       style="display:none"
       (change)="onImport($event)" />
     <button class="btn-outline" (click)="onExport()">Export</button>
+    <button class="btn-green" [class.stats-active]="showStats" (click)="showStats ? closeStats() : openStats()">
+      Statistics
+    </button>
     <button class="btn-danger" (click)="authService.logout()">Logout</button>
   </div>
 
@@ -24,8 +30,11 @@
   <div *ngIf="importError" class="error-banner">{{ importError }}</div>
 
   <div class="body">
+    <!-- Mobile overlay: tap to close sidebar -->
+    <div class="sidebar-overlay" [class.sidebar-open]="sidebarOpen" (click)="toggleSidebar()"></div>
+
     <!-- Sidebar -->
-    <div class="sidebar">
+    <div class="sidebar" [class.sidebar-open]="sidebarOpen">
       <div class="sidebar-header">
         <span>My Tours</span>
         <button class="btn-green" (click)="openCreateTour()">+ New</button>
@@ -44,107 +53,203 @@
       <div *ngIf="tours.length === 0" class="no-tours">No tours found</div>
     </div>
 
-    <!-- Detail panel -->
-    <div class="detail" *ngIf="selectedTour; else noSelection">
+    <!-- Statistics panel -->
+    <div class="detail stats-panel" *ngIf="showStats">
       <div class="detail-header">
-        <span class="detail-title">{{ selectedTour.name }}</span>
-        <div>
-          <button class="btn-outline" (click)="openEditTour(selectedTour)">Edit</button>
-          <button class="btn-danger" (click)="deleteTour(selectedTour.id)">Delete</button>
-        </div>
+        <span class="detail-title">Statistics</span>
+        <button class="btn-outline" (click)="closeStats()">✕ Close</button>
       </div>
 
-      <!-- Info cards -->
-      <div class="info-row">
-        <div class="info-card">
-          <div class="info-label">From</div>
-          <div>{{ selectedTour.from }}</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">To</div>
-          <div>{{ selectedTour.to }}</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">Transport</div>
-          <div>{{ selectedTour.transportType }}</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">Distance</div>
-          <div>{{ selectedTour.distance }} km</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">Est. Time</div>
-          <div>{{ formatTime(selectedTour.estimatedTimeMinutes) }}</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">Popularity</div>
-          <div>{{ getPopularityLabel(tourStats?.popularity ?? selectedTour.popularity) }}</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">Child-friendly</div>
-          <div>{{ getChildFriendlinessLabel(tourStats?.childFriendliness ?? selectedTour.childFriendliness) }}</div>
-        </div>
-      </div>
+      <div *ngIf="statsLoading" class="stats-loading">Loading statistics...</div>
 
-      <!-- Description -->
-      <div class="description" *ngIf="selectedTour.description">
-        {{ selectedTour.description }}
-      </div>
-
-      <!-- Leaflet Map -->
-      <app-tour-map
-        [fromLocation]="selectedTour.from"
-        [toLocation]="selectedTour.to"
-        [tourName]="selectedTour.name">
-      </app-tour-map>
-
-      <!-- Tour Logs -->
-      <div class="logs-section">
-        <div class="logs-header">
-          <span>Tour Logs</span>
-          <button class="btn-green" (click)="openCreateLog()">+ Add Log</button>
+      <ng-container *ngIf="userStats && !statsLoading">
+        <!-- Overview -->
+        <div class="stats-section-title">Overview</div>
+        <div class="info-row">
+          <div class="info-card">
+            <div class="info-label">Total Tours</div>
+            <div class="stats-value">{{ userStats.overallStats.totalTours }}</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Total Logs</div>
+            <div class="stats-value">{{ userStats.overallStats.totalLogs }}</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Total Distance</div>
+            <div class="stats-value">{{ userStats.overallStats.totalDistance | number:'1.0-1' }} km</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Total Time</div>
+            <div class="stats-value">{{ formatTime(userStats.overallStats.totalTimeMinutes) }}</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Avg Distance</div>
+            <div class="stats-value">{{ userStats.overallStats.averageTourDistance | number:'1.0-1' }} km</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Avg Rating</div>
+            <div class="stats-value">{{ userStats.overallStats.averageRating | number:'1.0-1' }} / 5</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Avg Difficulty</div>
+            <div class="stats-value">{{ userStats.overallStats.averageDifficulty }} / 10</div>
+          </div>
         </div>
-        <table class="log-table">
-          <thead>
-          <tr>
-            <th>Date</th>
-            <th>Difficulty</th>
-            <th>Distance</th>
-            <th>Time</th>
-            <th>Rating</th>
-            <th>Comment</th>
-            <th>Actions</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let log of tourLogs">
-            <td>{{ log.dateTime | date:'yyyy-MM-dd' }}</td>
-            <td>{{ log.difficulty }}/10</td>
-            <td>{{ log.totalDistance }} km</td>
-            <td>{{ formatTime(log.totalTimeMinutes) }}</td>
-            <td>{{ log.rating }}/5</td>
-            <td class="comment-cell">{{ log.comment }}</td>
-            <td>
-              <button class="btn-sm" (click)="openEditLog(log)">Edit</button>
-              <button class="btn-sm btn-danger" (click)="deleteLog(log.id)">Delete</button>
-            </td>
-          </tr>
-          <tr *ngIf="tourLogs.length === 0">
-            <td colspan="7" class="no-logs">No logs yet</td>
-          </tr>
-          </tbody>
-        </table>
+
+        <!-- Transport type breakdown -->
+        <div class="stats-section-title" *ngIf="transportTypeEntries.length > 0">By Transport Type</div>
+        <div class="info-row" *ngIf="transportTypeEntries.length > 0">
+          <div class="info-card" *ngFor="let entry of transportTypeEntries">
+            <div class="info-label">{{ entry.type }}</div>
+            <div class="stats-value">{{ entry.count }} {{ entry.count === 1 ? 'tour' : 'tours' }}</div>
+            <div class="stats-sub">Avg {{ entry.avgDistance | number:'1.0-1' }} km</div>
+          </div>
+        </div>
+
+        <!-- Per-tour breakdown table -->
+        <div class="stats-section-title">Per Tour Breakdown</div>
+        <div class="stats-table-wrapper">
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>Tour</th>
+                <th>Logs</th>
+                <th>Avg Rating</th>
+                <th>Avg Difficulty</th>
+                <th>Total Distance</th>
+                <th>Total Time</th>
+                <th>Child-friendly</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ts of userStats.tourStats">
+                <td>{{ ts.tourName }}</td>
+                <td>{{ ts.logCount }}</td>
+                <td>{{ ts.averageRating | number:'1.0-1' }} / 5</td>
+                <td>{{ ts.averageDifficulty }} / 10</td>
+                <td>{{ ts.totalDistance | number:'1.0-1' }} km</td>
+                <td>{{ formatTime(ts.totalTimeMinutes) }}</td>
+                <td>{{ getChildFriendlinessLabel(ts.childFriendliness) }}</td>
+              </tr>
+              <tr *ngIf="userStats.tourStats.length === 0">
+                <td colspan="7" class="no-logs">No tour data available yet — add some logs to see stats.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+
+      <div *ngIf="!statsLoading && !userStats" class="no-logs" style="margin-top:2rem">
+        Could not load statistics. Please try again.
       </div>
     </div>
 
-    <ng-template #noSelection>
-      <div class="welcome-card">
-        <div class="welcome-icon">🗺️</div>
-        <h2>Welcome, {{ authService.getUsername() }}!</h2>
-        <p>You have <strong>{{ tours.length }}</strong> {{ tours.length === 1 ? 'tour' : 'tours' }} planned.</p>
-        <p class="welcome-hint">Select a tour from the left to see details, or create a new one to get started.</p>
+    <!-- Normal detail / welcome view -->
+    <ng-container *ngIf="!showStats">
+      <div class="detail" *ngIf="selectedTour; else noSelection">
+        <div class="detail-header">
+          <div class="detail-title-group">
+            <button class="back-btn" (click)="toggleSidebar()" aria-label="Back to tours">&#8592; Tours</button>
+            <span class="detail-title">{{ selectedTour.name }}</span>
+          </div>
+          <div>
+            <button class="btn-outline" (click)="openEditTour(selectedTour)">Edit</button>
+            <button class="btn-danger" (click)="deleteTour(selectedTour.id)">Delete</button>
+          </div>
+        </div>
+
+        <!-- Info cards -->
+        <div class="info-row">
+          <div class="info-card">
+            <div class="info-label">From</div>
+            <div>{{ selectedTour.from }}</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">To</div>
+            <div>{{ selectedTour.to }}</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Transport</div>
+            <div>{{ selectedTour.transportType }}</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Distance</div>
+            <div>{{ selectedTour.distance }} km</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Est. Time</div>
+            <div>{{ formatTime(selectedTour.estimatedTimeMinutes) }}</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Popularity</div>
+            <div>{{ getPopularityLabel(tourStats?.popularity ?? selectedTour.popularity) }}</div>
+          </div>
+          <div class="info-card">
+            <div class="info-label">Child-friendly</div>
+            <div>{{ getChildFriendlinessLabel(tourStats?.childFriendliness ?? selectedTour.childFriendliness) }}</div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="description" *ngIf="selectedTour.description">
+          {{ selectedTour.description }}
+        </div>
+
+        <!-- Leaflet Map -->
+        <app-tour-map
+          [fromLocation]="selectedTour.from"
+          [toLocation]="selectedTour.to"
+          [tourName]="selectedTour.name">
+        </app-tour-map>
+
+        <!-- Tour Logs -->
+        <div class="logs-section">
+          <div class="logs-header">
+            <span>Tour Logs</span>
+            <button class="btn-green" (click)="openCreateLog()">+ Add Log</button>
+          </div>
+          <table class="log-table">
+            <thead>
+            <tr>
+              <th>Date</th>
+              <th>Difficulty</th>
+              <th>Distance</th>
+              <th>Time</th>
+              <th>Rating</th>
+              <th>Comment</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let log of tourLogs">
+              <td>{{ log.dateTime | date:'yyyy-MM-dd' }}</td>
+              <td>{{ log.difficulty }}/10</td>
+              <td>{{ log.totalDistance }} km</td>
+              <td>{{ formatTime(log.totalTimeMinutes) }}</td>
+              <td>{{ log.rating }}/5</td>
+              <td class="comment-cell">{{ log.comment }}</td>
+              <td>
+                <button class="btn-sm" (click)="openEditLog(log)">Edit</button>
+                <button class="btn-sm btn-danger" (click)="deleteLog(log.id)">Delete</button>
+              </td>
+            </tr>
+            <tr *ngIf="tourLogs.length === 0">
+              <td colspan="7" class="no-logs">No logs yet</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </ng-template>
+
+      <ng-template #noSelection>
+        <div class="welcome-card">
+          <div class="welcome-icon">🗺️</div>
+          <h2>Welcome, {{ authService.getUsername() }}!</h2>
+          <p>You have <strong>{{ tours.length }}</strong> {{ tours.length === 1 ? 'tour' : 'tours' }} planned.</p>
+          <p class="welcome-hint">Select a tour from the left to see details, or create a new one to get started.</p>
+        </div>
+      </ng-template>
+    </ng-container>
   </div>
 </div>
 

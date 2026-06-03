@@ -14,6 +14,39 @@ export interface TourStats {
   childFriendliness: number;
 }
 
+export interface OverallStats {
+  totalTours: number;
+  totalLogs: number;
+  totalDistance: number;
+  totalTimeMinutes: number;
+  averageTourDistance: number;
+  averageTourTimeMinutes: number;
+  averageRating: number;
+  averageDifficulty: number;
+}
+
+export interface TourStatsSummary {
+  tourId: number;
+  tourName: string;
+  logCount: number;
+  totalDistance: number;
+  totalTimeMinutes: number;
+  averageRating: number;
+  averageDifficulty: number;
+  childFriendliness: number;
+}
+
+export interface TransportTypeStats {
+  toursByTransportType: { [key: string]: number };
+  avgDistanceByTransportType: { [key: string]: number };
+}
+
+export interface UserStatistics {
+  overallStats: OverallStats;
+  tourStats: TourStatsSummary[];
+  transportTypeStats: TransportTypeStats;
+}
+
 @Injectable({ providedIn: 'root' })
 export class StatisticsService {
   private baseUrl = '/api/statistics';
@@ -22,5 +55,9 @@ export class StatisticsService {
 
   getTourStatistics(tourId: number): Observable<TourStats> {
     return this.http.get<TourStats>(`${this.baseUrl}/tour/${tourId}`);
+  }
+
+  getUserStatistics(): Observable<UserStatistics> {
+    return this.http.get<UserStatistics>(this.baseUrl);
   }
 }

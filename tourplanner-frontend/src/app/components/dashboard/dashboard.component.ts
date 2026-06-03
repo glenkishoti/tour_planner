@@ -6,7 +6,7 @@ import { TourLogService } from '../../services/tour-log.service';
 import { AuthService } from '../../services/auth.service';
 import { SearchService } from '../../services/search.service';
 import { ImportExportService } from '../../services/import-export.service';
-import { StatisticsService, TourStats } from '../../services/statistics.service';
+import { StatisticsService, TourStats, UserStatistics } from '../../services/statistics.service';
 import { Tour, TourRequest } from '../../models/tour';
 import { TourLog, TourLogRequest } from '../../models/tour-log';
 import { TourFormComponent } from '../tour-form/tour-form.component';
@@ -32,6 +32,12 @@ export class DashboardComponent implements OnInit {
   showLogForm = false;
   editingLog: TourLog | null = null;
 
+  showStats = false;
+  userStats: UserStatistics | null = null;
+  statsLoading = false;
+
+  sidebarOpen = false;
+
   searchQuery = '';
   private searchSubject = new Subject<string>();
   isSearching = false;
@@ -48,7 +54,8 @@ export class DashboardComponent implements OnInit {
     private statisticsService: StatisticsService
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit(): void
+  {
     this.loadTours();
 
     // Debounce search — waits 400ms after user stops typing before calling backend
@@ -81,10 +88,16 @@ export class DashboardComponent implements OnInit {
     this.searchSubject.next(this.searchQuery);
   }
 
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
   selectTour(tour: Tour): void {
     this.selectedTour = tour;
     this.tourLogs = [];
     this.tourStats = null;
+    this.showStats = false;
+    this.sidebarOpen = false;
 
     this.tourLogService.getAll(tour.id).subscribe(logs => this.tourLogs = logs);
 
@@ -180,6 +193,36 @@ export class DashboardComponent implements OnInit {
 
   triggerImport(): void {
     document.getElementById('import-file-input')?.click();
+  }
+
+  openStats(): void {
+    this.showStats = true;
+    this.statsLoading = true;
+    this.userStats = null;
+    this.statisticsService.getUserStatistics().subscribe({
+      next: stats => {
+        this.userStats = stats;
+        this.statsLoading = false;
+      },
+      error: () => {
+        this.statsLoading = false;
+      }
+    });
+  }
+
+  closeStats(): void {
+    this.showStats = false;
+  }
+
+  get transportTypeEntries(): { type: string; count: number; avgDistance: number }[] {
+    if (!this.userStats?.transportTypeStats) return [];
+    const counts = this.userStats.transportTypeStats.toursByTransportType;
+    const avgDist = this.userStats.transportTypeStats.avgDistanceByTransportType;
+    return Object.keys(counts).map(type => ({
+      type,
+      count: counts[type],
+      avgDistance: avgDist[type] ?? 0
+    }));
   }
 
   formatTime(minutes: number): string {
