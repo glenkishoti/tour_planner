@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 @Component
 public class OpenRouteServiceClient {
@@ -51,7 +52,10 @@ public class OpenRouteServiceClient {
             }
 
             String profile = mapTransportTypeToProfile(transportType);
-            String coordinates = String.format("[[%f,%f],[%f,%f]]",
+            // Use Locale.US to guarantee '.' as decimal separator regardless of system locale.
+            // Without this, German/Austrian locales produce "48,208200" instead of "48.208200",
+            // which makes the JSON body invalid and causes ORS to return HTTP 400.
+            String coordinates = String.format(Locale.US, "[[%f,%f],[%f,%f]]",
                     fromCoords[0], fromCoords[1], toCoords[0], toCoords[1]);
 
             String url = BASE_URL + DIRECTIONS_ENDPOINT + profile;
@@ -68,9 +72,14 @@ public class OpenRouteServiceClient {
                 String responseBody = EntityUtils.toString(response.getEntity());
 
                 if (response.getCode() == 200) {
-                    return parseRouteResponse(responseBody);
+                    RouteInfo parsed = parseRouteResponse(responseBody);
+                    if (parsed != null) {
+                        return parsed;
+                    }
+                    log.warn("OpenRouteService returned empty routes for '{}' -> '{}', using fallback", from, to);
+                    return createFallbackRouteInfo(from, to, transportType);
                 } else {
-                    log.error("OpenRouteService returned error code: {}", response.getCode());
+                    log.error("OpenRouteService returned error code: {} — body: {}", response.getCode(), responseBody);
                     return createFallbackRouteInfo(from, to, transportType);
                 }
             }
@@ -125,7 +134,7 @@ public class OpenRouteServiceClient {
             double duration = summary.path("duration").asDouble();
 
             RouteInfo info = new RouteInfo();
-            info.setDistance(distance / 1000.0);
+            info.setDistance(Math.round(distance / 10.0) / 100.0); // metres → km, rounded to 2 d.p.
             info.setDurationInSeconds((long) duration);
             info.setGeometry(firstRoute.path("geometry").asText());
 

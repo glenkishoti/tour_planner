@@ -25,7 +25,7 @@ export class TourFormComponent implements OnInit {
   estimatedTimeMinutes: number | null = null;
   errorMessage = '';
 
-  transportTypes = ['Bike', 'Hike', 'Running', 'Vacation'];
+  transportTypes = ['Bike', 'Hike', 'Running', 'Car'];
 
   constructor(private tourService: TourService) {}
 
@@ -42,11 +42,13 @@ export class TourFormComponent implements OnInit {
   }
 
   onSave(): void {
-    if (!this.name || !this.from || !this.to || !this.distance || !this.estimatedTimeMinutes) {
+    if (!this.name || !this.from || !this.to) {
       this.errorMessage = 'Please fill in all required fields.';
       return;
     }
-    if (this.distance <= 0 || this.estimatedTimeMinutes <= 0) {
+    // Only validate when manually provided — null means "let the backend calculate from the route"
+    if ((this.distance !== null && this.distance <= 0) ||
+        (this.estimatedTimeMinutes !== null && this.estimatedTimeMinutes <= 0)) {
       this.errorMessage = 'Distance and time must be positive.';
       return;
     }

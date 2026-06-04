@@ -48,17 +48,21 @@ public class TourService {
         mapRequestToEntity(request, tour);
         tour.setUser(user);
 
-        RouteInfo routeInfo = openRouteServiceClient.getRouteInfo(
-            request.getFrom(),
-            request.getTo(),
-            request.getTransportType()
-        );
+        boolean needDistance = request.getDistance() == null;
+        boolean needTime     = request.getEstimatedTimeMinutes() == null;
 
-        if (request.getDistance() == null) {
-            tour.setDistance(routeInfo.getDistance());
-        }
-        if (request.getEstimatedTimeMinutes() == null) {
-            tour.setEstimatedTime(Duration.ofSeconds(routeInfo.getDurationInSeconds()));
+        if (needDistance || needTime) {
+            RouteInfo routeInfo = openRouteServiceClient.getRouteInfo(
+                request.getFrom(),
+                request.getTo(),
+                request.getTransportType()
+            );
+            if (needDistance) {
+                tour.setDistance(routeInfo.getDistance());
+            }
+            if (needTime) {
+                tour.setEstimatedTime(Duration.ofSeconds(routeInfo.getDurationInSeconds()));
+            }
         }
 
         Tour savedTour = tourRepository.save(tour);
@@ -95,19 +99,31 @@ public class TourService {
         Tour tour = tourRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Tour not found with id: " + id));
 
+        // Check whether any routing-relevant field changed BEFORE overwriting the entity.
+        // If from/to/transportType changed the stored distance and time are stale,
+        // so ORS must recalculate them regardless of what the form sent.
+        boolean routeChanged = !tour.getFrom().equalsIgnoreCase(request.getFrom())
+                            || !tour.getTo().equalsIgnoreCase(request.getTo())
+                            || !tour.getTransportType().equalsIgnoreCase(request.getTransportType());
+
         mapRequestToEntity(request, tour);
 
-        RouteInfo routeInfo = openRouteServiceClient.getRouteInfo(
-            request.getFrom(),
-            request.getTo(),
-            request.getTransportType()
-        );
+        boolean needDistance = routeChanged || request.getDistance() == null;
+        boolean needTime     = routeChanged || request.getEstimatedTimeMinutes() == null;
 
-        if (request.getDistance() == null) {
-            tour.setDistance(routeInfo.getDistance());
-        }
-        if (request.getEstimatedTimeMinutes() == null) {
-            tour.setEstimatedTime(Duration.ofSeconds(routeInfo.getDurationInSeconds()));
+        if (needDistance || needTime) {
+            log.info("Recalculating route info for tour id: {} (routeChanged={})", id, routeChanged);
+            RouteInfo routeInfo = openRouteServiceClient.getRouteInfo(
+                request.getFrom(),
+                request.getTo(),
+                request.getTransportType()
+            );
+            if (needDistance) {
+                tour.setDistance(routeInfo.getDistance());
+            }
+            if (needTime) {
+                tour.setEstimatedTime(Duration.ofSeconds(routeInfo.getDurationInSeconds()));
+            }
         }
 
         Tour updatedTour = tourRepository.save(tour);

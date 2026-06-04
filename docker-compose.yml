@@ -26,6 +26,7 @@ services:
       JWT_EXPIRATION: 86400000
       SERVER_PORT: 8080
       UPLOAD_DIR: /app/uploads/images
+      ORS_API_KEY: ${ORS_API_KEY}
     ports:
       - "8080:8080"
     depends_on:

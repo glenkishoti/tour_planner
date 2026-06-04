@@ -18,6 +18,6 @@ export interface TourRequest {
   from: string;
   to: string;
   transportType: string;
-  distance: number;
-  estimatedTimeMinutes: number;
+  distance?: number | null;
+  estimatedTimeMinutes?: number | null;
 }

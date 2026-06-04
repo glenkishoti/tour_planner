@@ -47,7 +47,7 @@
         <div class="tour-name">{{ tour.name }}</div>
         <div class="tour-sub">{{ tour.from }} → {{ tour.to }}</div>
         <span class="tag">{{ tour.transportType }}</span>
-        <span class="tag">{{ tour.distance }} km</span>
+        <span class="tag">{{ tour.distance | number:'1.0-2' }} km</span>
         <span class="tag">{{ formatTime(tour.estimatedTimeMinutes) }}</span>
       </div>
       <div *ngIf="tours.length === 0" class="no-tours">No tours found</div>
@@ -174,7 +174,7 @@
           </div>
           <div class="info-card">
             <div class="info-label">Distance</div>
-            <div>{{ selectedTour.distance }} km</div>
+            <div>{{ selectedTour.distance | number:'1.0-2' }} km</div>
           </div>
           <div class="info-card">
             <div class="info-label">Est. Time</div>
@@ -224,7 +224,7 @@
             <tr *ngFor="let log of tourLogs">
               <td>{{ log.dateTime | date:'yyyy-MM-dd' }}</td>
               <td>{{ log.difficulty }}/10</td>
-              <td>{{ log.totalDistance }} km</td>
+              <td>{{ log.totalDistance | number:'1.0-2' }} km</td>
               <td>{{ formatTime(log.totalTimeMinutes) }}</td>
               <td>{{ log.rating }}/5</td>
               <td class="comment-cell">{{ log.comment }}</td>

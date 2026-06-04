@@ -119,7 +119,16 @@ export class DashboardComponent implements OnInit {
 
   onTourSaved(): void {
     this.showTourForm = false;
-    this.loadTours();
+    const editedId = this.editingTour?.id ?? this.selectedTour?.id ?? null;
+    this.tourService.getAll().subscribe(tours => {
+      this.tours = tours;
+      // Re-point selectedTour at the freshly loaded object so the detail view
+      // immediately shows the updated distance/time without a manual reload.
+      if (editedId) {
+        const updated = tours.find(t => t.id === editedId);
+        if (updated) this.selectedTour = updated;
+      }
+    });
   }
 
   deleteTour(id: number): void {
