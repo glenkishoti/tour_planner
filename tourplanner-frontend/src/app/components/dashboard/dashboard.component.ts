@@ -250,8 +250,8 @@ export class DashboardComponent implements OnInit {
 
   getChildFriendlinessLabel(value: number | undefined): string {
     if (value === undefined || value === null) return 'N/A';
-    if (value >= 7) return 'Very friendly';
-    if (value >= 4) return 'Moderate';
+    if (value >= 70) return 'Very friendly';
+    if (value >= 40) return 'Moderate';
     return 'Challenging';
   }
 }
